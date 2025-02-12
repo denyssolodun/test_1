@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STONE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding-bottom: 80px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #be00cc;
+            text-shadow:
+                0 0 3px #be00cc,
+                0 0 5px #be00cc,
+                0 0 7px #be00cc;
+            -webkit-text-stroke: 2px #4a0050;
+            paint-order: stroke fill;
+        }
+
+        #tapImage {
+            width: 200px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.09s;
+            filter: none;
+        }
+
+        #tapImage:active {
+            transform: scale(0.93);
+            filter: drop-shadow(0px 0px 30px #ffffff);
+            transition: filter 0.2s;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #be00cc;
+            text-shadow:
+                0 0 3px #be00cc,
+                0 0 5px #be00cc,
+                0 0 8px #be00cc;
+            -webkit-text-stroke: 2px #4a0050;
+            paint-order: stroke fill;
+        }
+
+        .icon-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 200px;
+            background-color: #2c2c2c;
+            padding: 10px;
+            border-radius: 30px;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(190, 0, 204, 0.8);
+            border: 2px solid #be00cc;
+        }
+
+        .icon-bar img {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding-bottom: 100px;
+            }
+
+            .icon-bar {
+                width: 120px;
+                padding: 8px;
+            }
+
+            .icon-bar img {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        #pickaxe {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0px 0px 3px #be00cc);
+            transition: filter 0.2s ease-in-out;
+        }
+
+        #pickaxe.active {
+            filter: drop-shadow(0px 0px 10px #ffffff);
+        }
+
+        #taps {
+            position: absolute;
+            left: 80px;
+            bottom: 15px;
+            font-size: 1.2em;
+            color: #be00cc;
+            text-shadow:
+                0 0 3px #be00cc,
+                0 0 5px #be00cc,
+                0 0 8px #be00cc;
+            -webkit-text-stroke: 2px #4a0050;
+            paint-order: stroke fill;
+        }
+
+        .separator {
+            width: 2px;
+            height: 40px;
+            background-color: #be00cc;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="playerNickname">Nickname of player</h1>
+    <img src="photos/stone.png" id="tapImage" alt="Stone">
+    <div id="score">STONES: 0</div>
+    <div class="icon-bar">
+        <img src="photos/friends.png" alt="friends">
+        <div class="separator"></div>
+        <img src="photos/earn.png" alt="earn">
+        <div class="separator"></div>
+        <img src="photos/boost.png" alt="boost">
+    </div>
+
+    <img src="photos/pick.png" id="pickaxe" alt="Pick">
+    <div id="taps">0/1000</div>
+
+    <script>
+        let score = 0;
+        const tapImage = document.getElementById('tapImage');
+        const scoreDisplay = document.getElementById('score');
+        const tapsDisplay = document.getElementById('taps');
+        const pickaxe = document.getElementById('pickaxe');
+        const playerNickname = document.getElementById('playerNickname');
+
+        if (window.Telegram && window.Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            playerNickname.textContent = Telegram.WebApp.initDataUnsafe?.user?.first_name || "Player";
+        }
+
+        tapImage.addEventListener('pointerdown', (event) => {
+            event.preventDefault();
+            tapImage.style.filter = 'drop-shadow(0px 0px 30px #ffffff)';
+            tapImage.style.transform = 'scale(0.93)';
+            pickaxe.classList.add('active');
+            score++;
+            scoreDisplay.textContent = `STONES: ${score}`;
+            tapsDisplay.textContent = `${score}/1000`;
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.sendData(JSON.stringify({ score: score }));
+            }
+        });
+
+        tapImage.addEventListener('pointerup', () => {
+            tapImage.style.filter = 'none';
+            tapImage.style.transform = 'scale(1)';
+            pickaxe.classList.remove('active');
+        });
+
+        tapImage.addEventListener('pointerleave', () => {
+            tapImage.style.filter = 'none';
+            tapImage.style.transform = 'scale(1)';
+            pickaxe.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
