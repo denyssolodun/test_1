@@ -1,0 +1,7 @@
+{
+  "version": "1.0",
+  "title": "test_1",
+  "description": "Test",
+  "start_url": "https://github.com/denyssolodun/test_1",
+  "platforms": ["web"]
+}
